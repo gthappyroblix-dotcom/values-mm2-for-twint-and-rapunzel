@@ -1,0 +1,300 @@
+-- MM2 Value Calculator (Safe UI)
+-- LocalScript -> StarterPlayer -> StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "MM2ValueCalculator"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 600, 0, 400)
+main.Position = UDim2.new(0.5, -300, 0.5, -200)
+main.BackgroundColor3 = Color3.fromRGB(23, 22, 30)
+main.BorderSizePixel = 0
+main.Parent = gui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = main
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(120, 75, 220)
+stroke.Thickness = 1.5
+stroke.Parent = main
+
+local function createLabel(parent, text, size, position)
+local label = Instance.new("TextLabel")
+label.BackgroundTransparency = 1
+label.Text = text
+label.TextColor3 = Color3.fromRGB(240, 240, 245)
+label.TextSize = size
+label.Font = Enum.Font.GothamBold
+label.Position = position
+label.Parent = parent
+return label
+end
+
+local title = createLabel(
+main, "MM2 VALUE CALCULATOR", 20,
+UDim2.new(0, 20, 0, 10)
+)
+title.Size = UDim2.new(0, 350, 0, 35)
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+local close = Instance.new("TextButton")
+close.Size = UDim2.new(0, 35, 0, 35)
+close.Position = UDim2.new(1, -45, 0, 10)
+close.Text = "×"
+close.TextSize = 24
+close.TextColor3 = Color3.new(1, 1, 1)
+close.BackgroundColor3 = Color3.fromRGB(65, 45, 85)
+close.Parent = main
+
+close.MouseButton1Click:Connect(function()
+gui:Destroy()
+end)
+
+local tabs = Instance.new("Frame")
+tabs.Size = UDim2.new(0, 160, 1, -60)
+tabs.Position = UDim2.new(0, 10, 0, 50)
+tabs.BackgroundColor3 = Color3.fromRGB(30, 28, 38)
+tabs.Parent = main
+
+Instance.new("UICorner", tabs).CornerRadius = UDim.new(0, 8)
+
+local content = Instance.new("Frame")
+content.Size = UDim2.new(1, -190, 1, -60)
+content.Position = UDim2.new(0, 180, 0, 50)
+content.BackgroundTransparency = 1
+content.Parent = main
+
+local function clearContent()
+for _, v in ipairs(content:GetChildren()) do
+v:Destroy()
+end
+end
+
+local function createButton(parent, text, position, size)
+local b = Instance.new("TextButton")
+b.Size = size
+b.Position = position
+b.Text = text
+b.TextColor3 = Color3.new(1, 1, 1)
+b.TextSize = 14
+b.Font = Enum.Font.GothamMedium
+b.BackgroundColor3 = Color3.fromRGB(75, 48, 120)
+b.BorderSizePixel = 0
+b.Parent = parent
+Instance.new("UICorner", b).CornerRadius = UDim.new(0, 6)
+return b
+end
+
+local function createBox(parent, placeholder, position)
+local box = Instance.new("TextBox")
+box.Size = UDim2.new(0, 330, 0, 35)
+box.Position = position
+box.PlaceholderText = placeholder
+box.Text = ""
+box.TextColor3 = Color3.new(1, 1, 1)
+box.PlaceholderColor3 = Color3.fromRGB(150, 150, 160)
+box.BackgroundColor3 = Color3.fromRGB(38, 36, 48)
+box.Font = Enum.Font.Gotham
+box.TextSize = 14
+box.BorderSizePixel = 0
+box.Parent = parent
+Instance.new("UICorner", box).CornerRadius = UDim.new(0, 6)
+return box
+end
+
+local function home()
+clearContent()
+
+local welcome = createLabel(
+    content, "Welcome to MM2 Value Calculator", 19,
+    UDim2.new(0, 10, 0, 15)
+)
+welcome.Size = UDim2.new(1, -20, 0, 40)
+welcome.TextXAlignment = Enum.TextXAlignment.Left
+
+local info = createLabel(
+    content,
+    "Manual value calculator\n\nEnter item values yourself.\nThis UI does not use live values.",
+    15,
+    UDim2.new(0, 10, 0, 65)
+)
+info.Size = UDim2.new(1, -20, 0, 120)
+info.Font = Enum.Font.Gotham
+info.TextXAlignment = Enum.TextXAlignment.Left
+info.TextYAlignment = Enum.TextYAlignment.Top
+end
+
+local function calculator()
+clearContent()
+
+local heading = createLabel(
+    content, "TRADE CALCULATOR", 18,
+    UDim2.new(0, 10, 0, 10)
+)
+heading.Size = UDim2.new(1, -20, 0, 30)
+heading.TextXAlignment = Enum.TextXAlignment.Left
+
+createLabel(content, "Your offer value", 14,
+    UDim2.new(0, 10, 0, 55)).Size = UDim2.new(0, 200, 0, 25)
+
+local yourBox = createBox(content, "Enter your total value",
+    UDim2.new(0, 10, 0, 80))
+
+createLabel(content, "Their offer value", 14,
+    UDim2.new(0, 10, 0, 125)).
+Size = UDim2.new(0, 200, 0, 25)
+
+local theirBox = createBox(content, "Enter their total value",
+    UDim2.new(0, 10, 0, 150))
+
+local result = createLabel(content, "Result will appear here", 16,
+    UDim2.new(0, 10, 0, 245))
+result.Size = UDim2.new(1, -20, 0, 45)
+result.TextXAlignment = Enum.TextXAlignment.Left
+
+local calculate = createButton(content, "CALCULATE",
+    UDim2.new(0, 10, 0, 200), UDim2.new(0, 150, 0, 35))
+
+calculate.MouseButton1Click:Connect(function()
+    local a = tonumber(yourBox.Text)
+    local b = tonumber(theirBox.Text)
+
+    if not a or not b or a < 0 or b < 0 then
+        result.Text = "Enter valid positive numbers."
+        result.TextColor3 = Color3.fromRGB(255, 100, 100)
+        return
+    end
+
+    local difference = b - a
+
+    if difference > 0 then
+        result.Text = "You gain +" .. difference
+        result.TextColor3 = Color3.fromRGB(100, 255, 150)
+    elseif difference < 0 then
+        result.Text = "You lose " .. math.abs(difference)
+        result.TextColor3 = Color3.fromRGB(255, 100, 100)
+    else
+        result.Text = "Fair trade! Values are equal."
+        result.TextColor3 = Color3.fromRGB(230, 230, 230)
+    end
+end)
+end
+
+local function values()
+clearContent()
+
+local heading = createLabel(
+    content, "ITEM SEARCH", 18,
+    UDim2.new(0, 10, 0, 10)
+)
+heading.Size = UDim2.new(1, -20, 0, 30)
+heading.TextXAlignment = Enum.TextXAlignment.Left
+
+local search = createBox(content, "Search item name...",
+    UDim2.new(0, 10, 0, 50))
+
+local list = Instance.new("ScrollingFrame")
+list.Size = UDim2.new(1, -20, 0, 250)
+list.Position = UDim2.new(0, 10, 0, 100)
+list.BackgroundColor3 = Color3.fromRGB(30, 28, 38)
+list.BorderSizePixel = 0
+list.ScrollBarThickness = 5
+list.Parent = content
+
+local layout = Instance.new("UIListLayout")
+layout.Padding = UDim.new(0, 5)
+layout.Parent = list
+
+-- Sample entries, NOT current official values.
+local items = {
+    {name = "Heartblade", value = 100},
+    {name = "Chroma Luger", value = 150},
+    {name = "Elderwood Scythe", value = 200},
+    {name = "Harvester", value = 300},
+    {name = "Icepiercer", value = 350},
+    {name = "Corrupt", value = 250},
+}
+
+local function refresh()
+    for _, child in ipairs(list:GetChildren()) do
+        if child:IsA("TextLabel") then
+            child:Destroy()
+        end
+    end
+
+    local query = string.lower(search.Text)
+
+    for _, item in ipairs(items) do
+        if string.find(string.lower(item.name), query, 1, true) then
+            local row = Instance.new("TextLabel")
+            row.Size = UDim2.new(1, -10, 0, 35)
+            row.BackgroundColor3 = Color3.fromRGB(45, 42, 55)
+            row.BorderSizePixel = 0
+            row.TextColor3 = Color3.new(1, 1, 1)
+            row.TextSize = 14
+            row.Font = Enum.Font.Gotham
+            row.Text = item.name .. "  |  Sample value: " .. item.value
+            row.Parent = list
+        end
+    end
+
+    list.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+end
+
+search:GetPropertyChangedSignal("Text"):Connect(refresh)
+refresh()
+end
+
+local function addTab(text, order, callback)
+local button = createButton(
+tabs, text,
+UDim2.new(0, 5, 0, 10 + (order - 1) * 45),
+UDim2.new(1, -10, 0, 35)
+)
+
+button.MouseButton1Click:Connect(callback)
+end
+
+addTab("Home", 1, home)
+addTab("Values", 2, values)
+addTab("Calculator", 3, calculator)
+
+home()
+
+-- Drag window
+local dragging = false
+local dragStart
+local startPosition
+
+main.InputBegan:Connect(function(input)
+if input.UserInputType == Enum.UserInputType.MouseButton1 then
+dragging = true
+dragStart = input.Position
+startPosition = main.Position
+end
+end)
+
+main.InputEnded:Connect(function(input)
+if input.UserInputType == Enum.UserInputType.MouseButton1 then
+dragging = false
+end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+local delta = input.Position - dragStart
+main.Position = UDim2.new(
+startPosition.X.Scale,
+startPosition.X.Offset + delta.X,
+startPosition.Y.Scale,
+startPosition.Y.Offset + delta.Y
+)
+end
+end)
